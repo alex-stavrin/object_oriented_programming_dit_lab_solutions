@@ -209,7 +209,7 @@ void display_protein_data(Protein protein)
 }
 
 // This functions are only for learning. They are a bad practice
-Protein set_protein_name(Protein protein, string new_name)
+Protein update_protein_name(Protein protein, string new_name)
 {
     protein.set_name(new_name);
     return protein;
@@ -222,7 +222,7 @@ int main()
 
     cout << "Proteins in memory: " << proteins_counter << endl;
 
-    protein1 = set_protein_name(protein1, "Green Goblin");
+    protein1 = update_protein_name(protein1, "Green Goblin");
 
     display_protein_data(protein1);
     display_protein_data(*p_protein2);
