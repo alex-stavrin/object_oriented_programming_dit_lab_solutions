@@ -1,7 +1,8 @@
 #include <iostream>
 #include <vector>
 
-int objects_counter = 0;
+int proteins_counter = 0;
+int genes_counter = 0;
 
 using namespace std;
 
@@ -23,21 +24,21 @@ class Protein
         Protein() : id(""), name(""), sequence("")
         {
             print_construct_message();
-            objects_counter++;
+            proteins_counter++;
         }
 
         Protein(string starting_id, string starting_name, string starting_sequence) : id(starting_id), name(starting_name)
         , sequence(starting_sequence)
         {
             print_construct_message();
-            objects_counter++;
+            proteins_counter++;
         }
 
         // destructor
         ~Protein()
         {
             cout << "Protein " << get_name() << " destroyed." << endl;
-            objects_counter--;
+            proteins_counter--;
         }
 
         // setter functions
@@ -90,6 +91,8 @@ class Protein
 class Gene
 {
     private:
+        const string organism;
+
         string id;
         string name;
         string chrom;
@@ -105,25 +108,25 @@ class Gene
     public:
 
         // constructor
-        Gene() : id(""), name(""), chrom(""), start(0), end(0), strand(' ')
+        Gene() : id(""), name(""), chrom(""), start(0), end(0), strand(' '), organism("")
         {
             print_construct_message();
-            objects_counter++;
+            genes_counter++;
         }
 
-        Gene(string starting_id, string starting_name, string starting_chrom, int starting_start, int starting_end
-            , char starting_strand) : id(starting_id), name(starting_name), chrom(starting_chrom), start(starting_start), end(starting_end),
-            strand(starting_strand) 
+        Gene(string starting_id, string starting_name, string starting_chrom, int starting_start, int starting_end,
+            char starting_strand, string starting_organism) : id(starting_id), name(starting_name), chrom(starting_chrom),
+            start(starting_start), end(starting_end), strand(starting_strand), organism(starting_organism)
         {
             print_construct_message();
-            objects_counter++;
+            genes_counter++;
         }
 
         // destructor
         ~Gene()
         {
             cout << "Gene " << get_name() << " destroyed." << endl;
-            objects_counter--;
+            genes_counter--;
         }
 
         // setter functions
@@ -197,39 +200,61 @@ class Gene
         }        
 };
 
+
+// This functions are only for learning. They are a bad practice
+void display_protein_data(Protein protein)
+{
+    protein.describe();
+    cout << "Length of sequence: " << protein.length() << endl;
+}
+
+// This functions are only for learning. They are a bad practice
+Protein set_protein_name(Protein protein, string new_name)
+{
+    protein.set_name(new_name);
+    return protein;
+}
+
 int main()
 {
-    Protein p1("P1", "Hemoglobin", "MQLVD...");
-    Protein p2("P2", "Myosin", "MAGTR...");
+    Protein protein1("P1", "Hemoglobin", "MQLVD...");
+    Protein* p_protein2 = new Protein("P2", "Myosin", "MAGTR...");
 
-    cout << "Objects in memory: " << objects_counter << endl;
+    cout << "Proteins in memory: " << proteins_counter << endl;
 
-    p1.describe();
-    cout << "Length of sequence: " << p1.length() << endl;
+    protein1 = set_protein_name(protein1, "Green Goblin");
 
-    p2.describe();
-    cout << "Length of sequence: " << p2.length() << endl;
+    display_protein_data(protein1);
+    display_protein_data(*p_protein2);
 
-    Gene g1("G1", "BRCA1", "chr17", 43044295, 43170245, '+');
-    Gene g2("G2", "TP53", "chr17", 7668402, 7687550, '-');
+    Gene gene1("G1", "BRCA1", "chr17", 43044295, 43170245, '+', "Homo sapiens");
+    Gene* p_gene2 = new Gene("G2", "TP53", "chr17", 7668402, 7687550, '-', "Dog");
 
-    cout << "Objects in memory: " << objects_counter << endl;
+    cout << "Genes in memory: " << genes_counter << endl;
 
-    g1.describe();
+    gene1.describe();
 
-    g2.describe();
+    p_gene2->describe();
 
     vector<string> protein_and_gene_names;
-    protein_and_gene_names.push_back(p1.get_name());
-    protein_and_gene_names.push_back(p2.get_name());
-    protein_and_gene_names.push_back(g1.get_name());
-    protein_and_gene_names.push_back(g2.get_name());
+    protein_and_gene_names.push_back(protein1.get_name());
+    protein_and_gene_names.push_back(p_protein2->get_name());
+    protein_and_gene_names.push_back(gene1.get_name());
+    protein_and_gene_names.push_back(p_gene2->get_name());
 
     cout << "Names in vector are: " << endl;
     for (string name : protein_and_gene_names)
     {
         cout << name << endl;
     }
+
+    cout << "Proteins in memory: " << proteins_counter << endl;
+    delete p_protein2;
+    cout << "Proteins in memory: " << proteins_counter << endl;
+
+    cout << "Genes in memory: " << genes_counter << endl;
+    delete p_gene2;
+    cout << "Genes in memory: " << genes_counter << endl;
 
     return 0;
 }
