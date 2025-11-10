@@ -195,8 +195,8 @@ class Gene
         // describe function
         void describe() const
         {
-            cout << "Gene " << get_id() << " (" << get_name() << ") on " << get_chrom() << ":" << get_start()
-            << " (" << get_strand() << " strand)" << endl;
+            cout << "Gene " << get_id() << " (" << get_chrom() << ":" << get_start() << "-" << get_end()
+            << ", " << get_strand() << ")" << endl;
         }        
 };
 
