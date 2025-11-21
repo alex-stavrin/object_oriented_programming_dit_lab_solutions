@@ -1,8 +1,6 @@
-// Gene generates Isoforms
-// Isoform has different RNA. It can generate Proteins
-
 #include <iostream>
 #include <vector>
+#include <iomanip>
 
 int proteins_counter = 0;
 int genes_counter = 0;
@@ -13,21 +11,37 @@ class Sequence
 {
     private:
         string type;
-        string data;
+        static int count;
 
         void print_constructor_message()
         {
             cout << "Sequence " << type << "(" << data << ")" << " was created" << endl;
         }
 
+    protected:
+        string data;
+
     public:
 
+        
         // constructors
-        Sequence() : type(""), data("") { print_constructor_message(); };
-        Sequence(string n_type, string n_data) : type(n_type), data(n_data) { print_constructor_message(); };
+        Sequence() : type(""), data("")
+        { 
+            print_constructor_message(); 
+            count++;
+        }
+        Sequence(string n_type, string n_data) : type(n_type), data(n_data)
+        { 
+            print_constructor_message();
+            count++;
+        }
 
         // destructor
-        ~Sequence() { cout << "Sequence " << type << "(" << data << ")" << " was destroyed" << endl;}; 
+        ~Sequence() 
+        {
+            cout << "Sequence " << type << "(" << data << ")" << " was destroyed" << endl;
+            count--;
+        }; 
 
         void describe()
         {
@@ -38,18 +52,116 @@ class Sequence
         {
             return data.length(); 
         }
+
+        static int getCount()
+        {
+            return count;
+        }
+};
+
+int Sequence::count = 0;
+
+class DNASequence : public Sequence
+{
+    public:
+        DNASequence(string n_data) : Sequence("DNA", n_data) 
+        {
+            std::cout << "DNA Sequence created" << std::endl;
+        }
+
+        void  describe()
+        {
+            std::cout << "DNA Sequence: " << data << std::endl;
+        }
+
+        bool isValid()
+        {
+            for(char character : data)
+            {
+                if(character != 'A' && character != 'C' && character != 'G' && character != 'T')
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+};
+
+class RNASequence : public Sequence
+{
+    private:
+        void print_contructor_message()
+        {
+            std::cout << "RNA Sequence created" << std::endl;
+        }
+
+    public:
+        RNASequence() : Sequence()
+        {
+            print_contructor_message();
+        }
+        RNASequence(string n_data) : Sequence("RNA", n_data) 
+        {
+            print_contructor_message();
+        }
+
+        void describe()
+        {
+            std::cout << "RNA Sequence: " << data << std::endl;
+        }
+
+        bool isValid()
+        {
+            for(char character : data)
+            {
+                if(character != 'A' && character != 'C' && character != 'G' && character != 'U')
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+};
+
+class ProteinSequence : public Sequence
+{
+    public:
+        ProteinSequence(string n_data) : Sequence("Protein", n_data)
+        {
+            std::cout << "Protein Sequence created" << std::endl;
+        }
+
+        void describe()
+        {
+            std::cout << "Protein Sequence: " << data << std::endl;
+        }
+
+        bool isValid()
+        {
+            for(char character : data)
+            {
+                // B,J, O, U, X, Z. Letters that are not part of protein sequence
+                if(character == 'B' || character == 'J' || character == 'O' || character == 'U' || character == 'X' || character == 'Z')
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
 };
 
 class Isoform
 {
     private:
-        Sequence sequence;
+        RNASequence sequence;
         string id;
         string name;
 
     public:
         Isoform() : sequence(), id(""), name("") {}; 
-        Isoform(Sequence n_sequence, string n_id, string n_name) : sequence(n_sequence), id(n_id), name(n_name){};
+        Isoform(RNASequence n_sequence, string n_id, string n_name) : sequence(n_sequence), id(n_id), name(n_name){};
 
         void desribe()
         {
@@ -266,16 +378,49 @@ class Gene
 
 int main()
 {
+    DNASequence dSequenceValid("ACGCACGT");
+    DNASequence dSequenceInvalid("DABWADWBAWDHJBH");
+    
+    RNASequence rSequenceValid("ACGGCAU");
+    RNASequence rSequenceInvalid("DAWBAHDBDW");
+
+    ProteinSequence pSequenceValid("MVLSEGEWQLVLHVWAKVEADVAGHGQ");
+    ProteinSequence pSequenceInvalid("ADWBNADWKAJBJ");
+
+    // test count
+    int sequenceCount = Sequence::getCount();
+    std::cout << "Sequence count is: " << sequenceCount << std::endl;
+
+    // test length
+    std::cout << "DNA Sequence length: " << dSequenceValid.length() << std::endl;
+
+    std::cout << "RNA Sequence length: " << rSequenceValid.length() << std::endl;
+    
+    std::cout << "Protein Sequence length: " << pSequenceValid.length() << std::endl;
+
+    // make 0 and 1 be printed as false and true respectively
+    std::cout << std::boolalpha;
+
+    // test isValid
+    std::cout << "DNA Sequence 1 is valid: " << dSequenceValid.isValid() << std::endl;
+    std::cout << "DNA Sequence 2 is valid: " << dSequenceInvalid.isValid() << std::endl;
+
+    std::cout << "RNA Sequence 1 is valid: " << rSequenceValid.isValid() << std::endl;
+    std::cout << "RNA Sequence 2 is valid: " << rSequenceInvalid.isValid() << std::endl;
+
+
+    std::cout << "Protein Sequence 1 is valid: " << pSequenceValid.isValid() << std::endl;
+    std::cout << "Protein Sequence 2 is valid: " << pSequenceInvalid.isValid() << std::endl;
+
+    RNASequence rSequence1("ACGGCAC");
+    Isoform i1(rSequence1, "I1", "Isoform 1");
+
+    RNASequence rSequence2("ACGGCGC");
+    Isoform i2(rSequence2, "I2", "Isoform 2");
+
     Gene gene("G1", "Gene One", "chr17", 123124, 2323232, '+', "Homo Sapiens");
-
-    Sequence sequence1("DNA", "DAWADWBAWDH");
-    Sequence sequence2("RNA", "ADWJLADWJKW");
-
-    Isoform isoform1(sequence1, "ISO1", "Isoform 1");
-    Isoform isoform2(sequence2, "ISO2", "Isoform 2");
-
-    gene.add_isoform(isoform1);
-    gene.add_isoform(isoform2);
+    gene.add_isoform(i1);
+    gene.add_isoform(i2);
 
     gene.describe();
 
