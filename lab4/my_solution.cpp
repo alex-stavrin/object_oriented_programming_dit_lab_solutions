@@ -10,12 +10,11 @@ using namespace std;
 class Sequence
 {
     private:
-        string type;
         static int count;
 
         void print_constructor_message()
         {
-            cout << "Sequence " << type << "(" << data << ")" << " was created" << endl;
+            cout << "Sequence " << "(" << data << ")" << " was created" << endl;
         }
 
     protected:
@@ -25,12 +24,12 @@ class Sequence
 
         
         // constructors
-        Sequence() : type(""), data("")
+        Sequence() : data("")
         { 
             print_constructor_message(); 
             count++;
         }
-        Sequence(string n_type, string n_data) : type(n_type), data(n_data)
+        Sequence(string n_data) : data(n_data)
         { 
             print_constructor_message();
             count++;
@@ -39,13 +38,13 @@ class Sequence
         // destructor
         ~Sequence() 
         {
-            cout << "Sequence " << type << "(" << data << ")" << " was destroyed" << endl;
+            cout << "Sequence " << "(" << data << ")" << " was destroyed" << endl;
             count--;
         }; 
 
         void describe()
         {
-            cout << "Type " << type << ": " << data << endl;
+            cout << data << endl;
         }
 
         int length()
@@ -64,7 +63,7 @@ int Sequence::count = 0;
 class DNASequence : public Sequence
 {
     public:
-        DNASequence(string n_data) : Sequence("DNA", n_data) 
+        DNASequence(string n_data) : Sequence(n_data) 
         {
             std::cout << "DNA Sequence created" << std::endl;
         }
@@ -101,7 +100,7 @@ class RNASequence : public Sequence
         {
             print_contructor_message();
         }
-        RNASequence(string n_data) : Sequence("RNA", n_data) 
+        RNASequence(string n_data) : Sequence(n_data) 
         {
             print_contructor_message();
         }
@@ -127,7 +126,7 @@ class RNASequence : public Sequence
 class ProteinSequence : public Sequence
 {
     public:
-        ProteinSequence(string n_data) : Sequence("Protein", n_data)
+        ProteinSequence(string n_data) : Sequence(n_data)
         {
             std::cout << "Protein Sequence created" << std::endl;
         }
